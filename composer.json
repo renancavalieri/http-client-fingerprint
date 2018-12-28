@@ -1,0 +1,29 @@
+{
+    "name": "pollus/http-client-fingerprint",
+    "description": "Utilitários para identificação do cliente HTTP e geração de tokens únicos",
+    "keywords": ["php", "fingerprint", "security"],
+    "license": "MIT",
+    "authors": 
+    [
+        {
+            "name": "Renan Cavalieri",
+            "email": "renan@tecdicas.com"
+        }
+    ],
+    "type": "library",
+    "require": 
+    {
+        "php": ">=7.2"
+    },
+    "require-dev": 
+    {
+        "phpunit/phpunit": "^7"
+    },
+    "autoload": 
+	{
+        "psr-4": 
+        {
+            "Pollus\\HttpClientFingerprint\\": "src/"
+        }
+    }
+}

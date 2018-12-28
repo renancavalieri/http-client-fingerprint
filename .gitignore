@@ -1,0 +1,5 @@
+vendor/
+composer.lock
+.DS_Store
+nbproject/
+phpunit-7.4.4.phar
