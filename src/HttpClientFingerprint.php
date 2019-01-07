@@ -1,17 +1,18 @@
 <?php declare(strict_types=1);
 
-namespace Pollus\HttpClientFingerprint;
-
 /**
  * Http Client Fingerprint
  * @license https://opensource.org/licenses/MIT MIT
  * @author Renan Cavalieri <renan@tecdicas.com>
  */
 
+namespace Pollus\HttpClientFingerprint;
+
 use Pollus\HttpClientFingerprint\Models\IpAddress;
 use Pollus\HttpClientFingerprint\Exceptions\IpAddressException;
 use Pollus\HttpClientFingerprint\Exceptions\UserAgentException;
 use Pollus\HttpClientFingerprint\Exceptions\SessionIdException;
+use Pollus\HttpClientFingerprint\HttpClientFingerprintInterface;
 
 /**
  * This class is only a helper to get the remote IP Address, UserAgent and 
@@ -21,7 +22,7 @@ use Pollus\HttpClientFingerprint\Exceptions\SessionIdException;
  * 
  * Also it does provides a very basic IP validation using internal PHP function "filter_var"
  */
-class HttpClientFingerprint 
+class HttpClientFingerprint implements HttpClientFingerprintInterface
 {
     /**
      * @var array
@@ -30,7 +31,7 @@ class HttpClientFingerprint
             
     
     /**
-     * Get the IpAddress
+     * Gets the IpAddress
      * 
      * @return string
      * @throws IpAddressException
@@ -48,8 +49,6 @@ class HttpClientFingerprint
     /**
      * Get the userAgent
      * 
-     * Do not trust this value!
-     * 
      * @param int $max_lenght
      * @throws UserAgentException when the userAgent is empty
      * @return string
@@ -65,7 +64,7 @@ class HttpClientFingerprint
     }
     
     /**
-     * Get the Session ID
+     * Gets the Session ID
      * 
      * @return string
      * @throws SessionIdException when the session aren't active
