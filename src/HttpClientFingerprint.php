@@ -33,6 +33,8 @@ class HttpClientFingerprint implements HttpClientFingerprintInterface
     /**
      * Gets the IpAddress
      * 
+     * Always return "127.0.0.1" if rant on CLI
+     * 
      * @return string
      * @throws IpAddressException
      */
@@ -40,8 +42,15 @@ class HttpClientFingerprint implements HttpClientFingerprintInterface
     {
         if (($this->instances["ipaddress"] ?? false) === false)
         {
-            $ip_value = trim(filter_input(INPUT_SERVER, 'REMOTE_ADDR', FILTER_SANITIZE_STRING));
-            $this->instances["ipaddress"] = new IpAddress($ip_value);
+            if ($this->isCli())
+            {
+                $this->instances["ipaddress"] = new IpAddress("127.0.0.1");
+            }
+            else
+            {
+                $ip_value = trim(filter_input(INPUT_SERVER, 'REMOTE_ADDR', FILTER_SANITIZE_STRING));
+                $this->instances["ipaddress"] = new IpAddress($ip_value);
+            }
         }
         return $this->instances["ipaddress"];
     }
@@ -49,17 +58,25 @@ class HttpClientFingerprint implements HttpClientFingerprintInterface
     /**
      * Get the userAgent
      * 
+     * Always returns "PHP CONSOLE CLIENT" on cli
+     * 
      * @param int $max_lenght
      * @throws UserAgentException when the userAgent is empty
      * @return string
      */
     public function getUserAgent(int $max_lenght = 1024) : string
     {
-        $userAgent = substr(trim(filter_input(INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_SANITIZE_STRING)), 0, $max_lenght);
-        
-        if ($userAgent === "")
+        if ($this->isCli())
         {
-            throw new UserAgentException("The client doesn't sent a valid user agent");
+            $userAgent = substr(trim(filter_input(INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_SANITIZE_STRING)), 0, $max_lenght);
+            if ($userAgent === "")
+            {
+                throw new UserAgentException("The client doesn't sent a valid user agent");
+            }
+        }
+        else
+        {
+            return "PHP CONSOLE CLIENT";
         }
     }
     
@@ -76,5 +93,13 @@ class HttpClientFingerprint implements HttpClientFingerprintInterface
             throw new SessionIdException("Session wasn't started");
         }
         return session_id();
+    }
+    
+    /**
+     * @return bool
+     */
+    protected function isCli() : bool
+    {
+        return (php_sapi_name() === 'cli' || php_sapi_name() === 'cli-server');
     }
 }
